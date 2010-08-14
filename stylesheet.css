@@ -1,0 +1,71 @@
+html
+{
+	background: #97b4d1;
+}
+
+body
+{
+	font-family: monospace;
+	font-size: 1em;
+	width: 900px;
+	margin: 0 auto;
+	margin-top: 60px;
+}
+
+h1
+{
+	padding-top: 100px;
+	color: #fff;
+	font-size: 280%;
+	text-shadow: 0px 1px 2px #63809d;
+}
+
+h2
+{
+	font-size: 100%;
+	margin-top: -20px;
+}
+
+h3
+{
+	font-size: 80%;
+	font-weight: normal;
+	margin-top: -10px;
+}
+
+h4
+{
+	margin-top: -10px;
+}
+
+a
+{
+	color: #475461;
+}
+
+h4 span
+{
+	font-size: 80%;
+}
+
+div div
+{
+	font-size: 200%;
+	font-weight: bold;
+	text-shadow: 0px 1px 2px #63809d;
+}
+
+span
+{
+	font-weight: normal;
+	text-shadow: none;
+}
+
+canvas
+{
+	background: #39f;
+	cursor: pointer;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	float: right;
+}
