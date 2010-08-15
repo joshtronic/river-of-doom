@@ -68,7 +68,7 @@ $(document).ready(function()
 		alert('Unfortunately, your browser sucks');
 	}
 
-	$('canvas').click(function()
+	$('canvas').bind('click touchstart', function()
 	{
 		if (started == false)
 		{
@@ -118,18 +118,22 @@ $(document).ready(function()
 				index++;
 			}
 
+			prevX = 174.5;
+
 			started = true;
 			context.clearRect(0, 0, width, height);
 			intervalId = setInterval(drawWalls, speed);
 		}
 	});
 
-	$('canvas').mousemove(function(event)
+	$('canvas').bind('mousemove touchmove', function(event)
 	{
 		if (started == true)
 		{
+			var e = typeof(event) != "undefined" && typeof(event.touches) != "undefined" ? event.touches.item(0) : event;
+
 			context.clearRect(prevX, middle, 49, 65);
-			prevX = event.pageX - canvas.position().left - 25;
+			prevX = e.pageX - canvas.position().left - 25;
 			drawKayak();
 		}
 	});
@@ -266,6 +270,7 @@ $(document).ready(function()
 		}
 	}
 
+	// Draws walls and obstacles as well as increments the speed and decrements the width of the river
 	function drawWalls()
 	{
 		context.clearRect(0, 0, width, height);
