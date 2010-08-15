@@ -3,8 +3,20 @@ $(document).ready(function()
 	var started = false;
 	var canvas  = $('canvas');
 	var cheater = false;
-	var pi2x = Math.PI * 2;
-	
+	var pi2x    = Math.PI * 2;
+
+	var userAgent = navigator.userAgent.toLowerCase();
+
+	var isIE      = userAgent.indexOf('msie') != -1;
+	var isIphone  = userAgent.indexOf('iphone') != -1 || userAgent.indexOf('ipad') != -1
+	var isAndroid = userAgent.indexOf('android') != -1;
+
+	if (!isIE)
+	{
+		canvas.css('-moz-border-radius',    '20px');
+		canvas.css('-webkit-border-radius', '20px');
+	}
+
 	// In case you ever need to reset the score
 	//localStorage.setItem('high', 0);
 
@@ -19,35 +31,34 @@ $(document).ready(function()
 
 	if (canvas[0].getContext)
 	{
-		var context = canvas[0].getContext('2d');
-		var width = canvas.width();
-		var height = canvas.height();
-		var middle = 35;
-		var offset = canvas.attr('offsetLeft');
-		var prevX = (width / 2) - 6;
-		var wallLeftX = new Array();
-		var wallLeftY = new Array();
-		var wallRightX = new Array();
-		var wallRightY = new Array();
-		var leftX = 10;
-		var rightX = width - 10;
-		var nextLeft = leftX;
-		var nextRight = rightX;
+		var context        = canvas[0].getContext('2d');
+		var width          = canvas.width();
+		var height         = canvas.height();
+		var middle         = 35;
+		var prevX          = (width / 2) - 6;
+		var wallLeftX      = new Array();
+		var wallLeftY      = new Array();
+		var wallRightX     = new Array();
+		var wallRightY     = new Array();
+		var leftX          = 10;
+		var rightX         = width - 10;
+		var nextLeft       = leftX;
+		var nextRight      = rightX;
 		var previousPaddle = 'left';
-		var nextPaddle = 'center';
-		var index = 0;
+		var nextPaddle     = 'center';
+		var direction      = 'center';
+		var index;
+		var intervals;
 		var min;
 		var max;
 		var turn;
-		var speed = 80;
-		var intervals = 0;
-		var direction = 'center';
+		var speed;
 
 		context.strokeStyle = '#000';
-		context.lineWidth = '2';
-		context.lineCap = 'round';
-		context.lineJoin = 'round';
-		context.font = "bold 22px monospace";
+		context.lineWidth   = '2';
+		context.lineCap     = 'round';
+		context.lineJoin    = 'round';
+		context.font        = "bold 22px monospace";
 		context.fillText('Click to Start', 110, 250);
 
 		var intervalId = '';
@@ -61,26 +72,28 @@ $(document).ready(function()
 	{
 		if (started == false)
 		{
+			canvas.css('cursor', 'none');
+
 			cheater = $('input:checked').length;
 
-			wallLeftX = new Array();
-			wallLeftY = new Array();
+			wallLeftX  = new Array();
+			wallLeftY  = new Array();
 			wallRightX = new Array();
 			wallRightY = new Array();
-			rocks = new Array();
-			gators = new Array();
-			fireflies = new Array();
-			leftX = 10;
-			rightX = width - 10;
-			nextLeft = leftX;
-			nextRight = rightX;
+			rocks      = new Array();
+			gators     = new Array();
+			fireflies  = new Array();
+			leftX      = 10;
+			rightX     = width - 10;
+			nextLeft   = leftX;
+			nextRight  = rightX;
 
-			interval = 1;
-			index = 0;
-			min = 100;
-			max = 115;
-			turn = 0;
-			speed = 70;
+			interval  = 1;
+			index     = 0;
+			min       = 100;
+			max       = 115;
+			turn      = 0;
+			speed     = 70;
 			intervals = 0;
 			direction = 'center';
 
@@ -93,13 +106,13 @@ $(document).ready(function()
 				wallRightY[index] = i;
 
 				nextLeft = leftX;
-				leftX += 7;
+				leftX   += 7;
 
 				nextRight = rightX;
-				rightX -= 7;
+				rightX   -= 7;
 
-				rocks[index] = null;
-				gators[index] = null;
+				rocks[index]     = null;
+				gators[index]    = null;
 				fireflies[index] = null;
 
 				index++;
@@ -115,10 +128,8 @@ $(document).ready(function()
 	{
 		if (started == true)
 		{
-			canvas.css('cursor', 'move');
 			context.clearRect(prevX, middle, 49, 65);
-
-			prevX = event.clientX - offset - 25;
+			prevX = event.pageX - canvas.position().left - 25;
 			drawKayak();
 		}
 	});
@@ -250,6 +261,8 @@ $(document).ready(function()
 			context.fillStyle = '#000';
 			context.fillText('GAME OVER!', 145, 235);
 			context.fillText('Click to Restart', 100, 255);
+			
+			canvas.css('cursor', 'pointer');
 		}
 	}
 
@@ -347,32 +360,70 @@ $(document).ready(function()
 		}
 
 		context.beginPath();
-		context.moveTo(0, 485);
-		context.lineTo(0, 15);
-		context.arc(15, 15, 15, Math.PI, (Math.PI * 3) / 2, false);
-		context.moveTo(15, 0);
+
+		if (isIE)
+		{
+			context.moveTo(0, 500);
+			context.lineTo(0, 0);
+		}
+		else
+		{
+			context.moveTo(0, 485);
+			context.lineTo(0, 15);
+			context.arc(15, 15, 15, Math.PI, (Math.PI * 3) / 2, false);
+			context.moveTo(15, 0);
+		}
+
 		context.lineTo(wallLeftX[0], wallLeftY[0]);
 		for (var i in wallLeftX)
 		{
 			context.lineTo(wallLeftX[i], wallLeftY[i]);
 		}
-		context.lineTo(15, 500);
-		context.arc(15, 485, 15, Math.PI / 2, Math.PI, false);
+
+		if (isIE)
+		{
+			context.lineTo(0, 500);
+		}
+		else
+		{
+			context.lineTo(15, 500);
+			context.arc(15, 485, 15, Math.PI / 2, Math.PI, false);
+		}
+
 		context.fillStyle = '#090';
 		context.fill();
 
 		context.beginPath();
-		context.moveTo(400, 485);
-		context.lineTo(400, 15);
-		context.arc(385, 15, 15, pi2x, (Math.PI * 3) / 2, true);
-		context.moveTo(385, 0);
+
+		if (isIE)
+		{
+			context.moveTo(400, 500);
+			context.lineTo(400, 0);
+		}
+		else
+		{
+			context.moveTo(400, 485);
+			context.lineTo(400, 15);
+			context.arc(385, 15, 15, pi2x, (Math.PI * 3) / 2, true);
+			context.moveTo(385, 0);
+		}
+
 		context.lineTo(wallRightX[0], wallRightY[0]);
 		for (var i in wallRightX)
 		{
 			context.lineTo(wallRightX[i], wallRightY[i]);
 		}
-		context.lineTo(385, 500);
-		context.arc(385, 485, 15, Math.PI / 2, 0, true);
+
+		if (isIE)
+		{
+			context.lineTo(400, 500);
+		}
+		else
+		{
+			context.lineTo(385, 500);
+			context.arc(385, 485, 15, Math.PI / 2, 0, true);
+		}
+
 		context.fill();
 
 		drawKayak();
